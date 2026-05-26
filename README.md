@@ -2,13 +2,13 @@
 
 <img width="1774" height="813" alt="5" src="https://github.com/user-attachments/assets/1b16b83f-202f-42bb-9943-93c2733404b7" />
 
-# 🪖 AI 기반 훈련장 안전 및 보안 통합 관제 시스템
+# AI 기반 훈련장 안전 및 보안 통합 관제 시스템
 
 본 프로젝트는 사격 훈련장 내·외부에서 발생할 수 있는 주요 위험 요소(**화재 발생** 및 **민간인 무단 침입**)를 비전 AI 기술로 실시간 감지하고, ZeroMQ(ZMQ) 네트워크 인프라를 통해 즉각적인 경보를 전송하는 통합 관제 시스템의 백엔드 파이프라인입니다.
 
 ---
 
-## 🚀 주요 기능 (Key Features)
+## 주요 기능 (Key Features)
 
 ### 1. 훈련장 내·외부 화재 발생 탐지 및 경보
 * **실시간 발화 감지:** 사격 훈련 시 발생하는 오인 사격, 자연 발화, 유탄 등으로 인한 훈련장 내·외부 화재(불꽃, 연기)를 실시간 감지합니다.
@@ -20,7 +20,7 @@
 
 ---
 
-## 🏗️ 시스템 아키텍처 및 데이터 흐름
+## 시스템 아키텍처 및 데이터 흐름
 
 시스템은 연구실 환경에서의 **모델 고도화 파이프라인(Core)**과 실제 훈련장에 설치되는 장비용 **실시간 분산 관제 서비스(Deployment)**의 투-트랙 구조로 설계되었습니다.
 
@@ -29,13 +29,13 @@
 
 ---
 
-## 📂 프로젝트 구조 및 파일 역할 (Project Structure)
+## 프로젝트 구조 및 파일 역할 (Project Structure)
 
-### 🖥️ Real-Time Serving (실시간 현장 관제 배포 스크립트)
+### Real-Time Serving (실시간 현장 관제 배포 스크립트)
 * `msc.py`: ZMQ 소켓 통신을 이용한 실시간 다중 객체(화재/연기/인간 등) 탐지 및 관제 메타데이터 전송 노드
 * `mtp.py`: 특정 관심 구역(ROI) 지정, OpenCV Contour 기반의 원근 변환(Warping), 다각형 영역 내 점 포함 검사 알고리즘을 활용한 정밀 표적 구역 침입/배회 감지 엔진
 
-### 🔬 Core Engine (AI 모델 개발 및 최적화 파이프라인)
+### Core Engine (AI 모델 개발 및 최적화 파이프라인)
 * `train_dual.py` / `train_triple.py`: PGI(프로그래밍 가능한 그래디언트 정보) 구조를 기반으로 한 듀얼/트리플 보조 브랜치 학습 스크립트 (학습 시에는 화재 및 인체 그래디언트 손실을 완벽히 보존하며, 배포 시에는 보조 브랜치를 제거하여 속도를 극대화)
 * `val_dual.py` / `val_triple.py`: 오탐율이 치명적인 보안 시스템 특성을 고려해 Precision, Recall, mAP를 다각도로 평가하는 정밀 모델 검증 도구
 * `detect.py`: 훈련장 로컬 환경 테스트를 위한 표준 이미지/동영상/CCTV 스트림 시각화 툴
@@ -43,7 +43,7 @@
 
 ---
 
-## 🛠️ 핵심 기술 메커니즘 (Technical Highlights)
+## 핵심 기술 메커니즘 (Technical Highlights)
 
 ### 1. ZMQ Conflate 고속 큐 시스템
 훈련장 전역에 배치된 CCTV 카메라로부터 수신되는 고주파 실시간 이미지 스트림이 네트워크 병목 현상으로 밀리는 것을 방지하기 위해 수신 소켓에 `CONFLATE` 옵션을 강제 적용했습니다. 큐 내부에 적체된 과거 프레임은 버리고, **항상 물리적 시점 기준 가장 최신 프레임만을 추론 엔진에 주입**하여 경보 발생 시 딜레이를 무력화합니다.
@@ -57,5 +57,7 @@
 
 ### 1. 엣지 장비 환경에 맞는 가중치 변환 (TensorRT)
 현장 관제 속도(FPS)를 극대화하기 위해 학습된 학습 가중치를 TensorRT 포맷으로 변환합니다.
+```bash
+python export.py --weights weights/best.pt --include engine --imgsz 1280 1280 --device 0
 ```bash
 python export.py --weights weights/best.pt --include engine --imgsz 1280 1280 --device 0
